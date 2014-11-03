@@ -114,7 +114,6 @@ public:
 	}
 	void add(Pet *p) {
 		Element *e = new Element(p);
-		e->time_stamp = time(NULL);
 		switch(p->type) {
 			case CatType:
 			{
@@ -221,9 +220,9 @@ int main(int argc, char *argv[]) {
 	p = new Cat(Purple);
 	pq->add(p);
 	//Test empty functions
-	printf("Total is %s\n",pq->isEmpty()?"True":"False");
-	printf("Cat is %s\n",pq->isCatEmpty()?"True":"False");
-	printf("Dog is %s\n",pq->isDogEmpty()?"True":"False");
+	printf("Total is empty:%s\n",pq->isEmpty()?"True":"False");
+	printf("Cat is empty:%s\n",pq->isCatEmpty()?"True":"False");
+	printf("Dog is empty:%s\n",pq->isDogEmpty()?"True":"False");
 	//Test poll dog
 	Dog *d = pq->pollDog();
 	d->print();
@@ -239,9 +238,9 @@ int main(int argc, char *argv[]) {
 		delete p;
 	}
 	//Test empty functions again
-	printf("Total is %s\n",pq->isEmpty()?"True":"False");
-	printf("Cat is %s\n",pq->isCatEmpty()?"True":"False");
-	printf("Dog is %s\n",pq->isDogEmpty()?"True":"False");
+	printf("Total is empty:%s\n",pq->isEmpty()?"True":"False");
+	printf("Cat is empty:%s\n",pq->isCatEmpty()?"True":"False");
+	printf("Dog is empty:%s\n",pq->isDogEmpty()?"True":"False");
 	delete pq;
 	return 0;
 }
