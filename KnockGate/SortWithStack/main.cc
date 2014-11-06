@@ -56,7 +56,7 @@ void selection_sort(std::stack<int> &data) {
 	while (sentinel < len) {
 		int min = data.top();
 		data.pop();
-		while (!data.empty()) {
+		while (data.size() > sentinel) {
 			int val = data.top();
 			data.pop();
 			if (val < min) {
@@ -66,18 +66,13 @@ void selection_sort(std::stack<int> &data) {
 				helper.push(val);
 			}
 		}
-		while (helper.size() > sentinel) {
+		data.push(min);
+		while (!helper.empty()) {
 			int val = helper.top();
 			helper.pop();
 			data.push(val);
 		}
-		helper.push(min);
 		sentinel++;
-	}
-	while (!helper.empty()) {
-		int val = helper.top();
-		helper.pop();
-		data.push(val);
 	}
 }
 
