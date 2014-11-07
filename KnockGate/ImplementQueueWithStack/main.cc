@@ -11,7 +11,7 @@
 *An input stack and an output stack, here are some principals that you must follow:
 *1.All input go to input stack
 *2.All output come from output stack
-*3.You should flush the data from input stack into output stack when the output stack is empty and there is a pop_front request
+*3.You should flush the data from input stack into output stack when the output stack is empty and there is a pop request
 *4.You can't flush the data from input stack into output stack when the output stack is not empty, this will violate the FIFO rule.
 *Cost: Time-O(n), Space:O(n)
 */
@@ -55,7 +55,6 @@ public:
 };
 
 int main(int argc, char *argv[]) {
-	//Test of insertion sort
 	ImplementedQueue iq;
 	printf("Queue is empty:%s\n",iq.empty()?"True":"False");
 	iq.push(3);
