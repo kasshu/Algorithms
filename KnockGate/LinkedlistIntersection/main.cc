@@ -4,6 +4,7 @@
 
 #include "stdio.h"
 #include <set>
+#include <cstdlib>
 using namespace std;
 
 struct Node {
@@ -199,66 +200,57 @@ Node *GetFirstNodeInLoop(Node *head) {
 	return cur;
 }
 
-Node * AddNumbers(Node *head_a, Node *head_b) {
+/*
+*Subproblem: How to check two regular linked list intersect? How to find the first node in
+*intersection?
+*/
+/*
+*Solution: If two regular linked list intersect, they will share the same last node. Assume
+*Linkedlist1's length is n, Linkedlist's length is m, and n > m. Set one pointer start at the
+*(n-m)th node of Linkedlist1 and another pointer start at the head of Linkedlist2. Two pointers
+*go down together and check if they equal to each other, then we will find the first node in
+*intersection.
+*/
+
+Node * GetFirstNodeInRegularIntersection(Node *head_a, Node *head_b) {
 	if(head_a == NULL || head_b == NULL) {
 		return NULL;
 	}
-	Node *reverse_a = Reverse(head_a);
-	Node *reverse_b = Reverse(head_b);
-	Node *cur_a = reverse_a;
-	Node *cur_b = reverse_b;
-	Node *newHead = NULL;
-	Node *tail = NULL;
-	int carry = 0;
-	while (cur_a != NULL && cur_b != NULL) {
-		Node *cur = new Node;
-		cur->next = NULL;
-		cur->val = cur_a->val + cur_b->val + carry;
-		if (cur->val >= 10) {
-			cur->val %= 10;
-			carry = 1;
-		} else {
-			carry = 0;
-		}
-		if (newHead == NULL) {
-			newHead = cur;
-		}
-		if (tail == NULL) {
-			tail = cur;
-		} else {
-			tail->next = cur;
-			tail = cur;
-		}
+	//Calculate length and find the last node of head_a
+	Node *cur_a = head_a;
+	Node *pre_a = NULL;
+	size_t len_a = 0;
+	while (cur_a != NULL) {
+		len_a++;
+		pre_a = cur_a;
+		cur_a = cur_a->next;
+	}
+	//Calculate length and find the last node of head_b
+	Node *cur_b = head_b;
+	Node *pre_b = NULL;
+	size_t len_b = 0;
+	while (cur_b != NULL) {
+		len_b++;
+		pre_b = cur_b;
+		cur_b = cur_b->next;
+	}
+	//not intersect
+	if (pre_a != pre_b) { 
+		return NULL;
+	}
+	//intersect
+	Node *cur_a = head_a;
+	Node *cur_b = head_b;
+	size_t diff = abs(len_a - len_b);
+	Node **temp = len_a >= len_b ? &cur_a : &cur_b;
+	for (size_t i = 0; i < diff; i++) {
+		(*temp) = (*temp)->next;
+	}
+	while (cur_a != cur_b) {
 		cur_a = cur_a->next;
 		cur_b = cur_b->next;
 	}
-	Node *remains = NULL;
-	if (cur_a != NULL) {
-		remains = cur_a;
-	}
-	if (cur_b != NULL) {
-		remains = cur_b;
-	}
-	while (remains != NULL) {
-		Node *cur = new Node;
-		cur->next = NULL;
-		cur->val = remains->val + carry;
-		carry = 0;
-		tail->next = cur;
-		tail = cur;
-		remains = remains->next;
-	}
-	if (carry != 0) { //cur_a == NULL && cur_b == NULL
-		Node *cur = new Node;
-		cur->next = NULL;
-		cur->val = carry;
-		tail->next = cur;
-		tail = cur;
-	}
-	Reverse(reverse_a);
-	Reverse(reverse_b);
-	Node *ret = Reverse(newHead);
-	return ret;
+	return cur_a;
 }
 
 int main(int argc, char *argv[]) {
