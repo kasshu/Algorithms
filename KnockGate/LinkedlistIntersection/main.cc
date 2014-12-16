@@ -213,6 +213,10 @@ Node *GetFirstNodeInLoop(Node *head) {
 */
 
 Node * GetFirstNodeInRegularIntersection(Node *head_a, Node *head_b) {
+	return GetFirstNodeInIntersectionNoLoop(head_a, head_b, NULL);
+}
+
+Node * GetFirstNodeInIntersectionNoLoop(Node *head_a, Node *head_b, Node *tail) {
 	if(head_a == NULL || head_b == NULL) {
 		return NULL;
 	}
@@ -220,7 +224,7 @@ Node * GetFirstNodeInRegularIntersection(Node *head_a, Node *head_b) {
 	Node *cur_a = head_a;
 	Node *pre_a = NULL;
 	size_t len_a = 0;
-	while (cur_a != NULL) {
+	while (cur_a != tail) {
 		len_a++;
 		pre_a = cur_a;
 		cur_a = cur_a->next;
@@ -229,7 +233,7 @@ Node * GetFirstNodeInRegularIntersection(Node *head_a, Node *head_b) {
 	Node *cur_b = head_b;
 	Node *pre_b = NULL;
 	size_t len_b = 0;
-	while (cur_b != NULL) {
+	while (cur_b != tail) {
 		len_b++;
 		pre_b = cur_b;
 		cur_b = cur_b->next;
@@ -251,6 +255,41 @@ Node * GetFirstNodeInRegularIntersection(Node *head_a, Node *head_b) {
 		cur_b = cur_b->next;
 	}
 	return cur_a;
+}
+
+/*
+* Subproblem: How to check two linked list with loop intersect? How to find the first node in
+* intersection?
+*/
+/*
+* Solution: If two linked list with loop intersect, they will share the same loop. We compare
+* the first node in loop. If they are the same, that's intersect1, we can reuse the algorithm 
+* of finding the first nodes in intersection of two regular linked list. If they are not the
+* same node, that's intersect2 or not intersect. We can start at one first node, see if we can
+* reach another node. If we can, that is intersect2, return either first node is ok. If we can't
+* that is not intersect.
+*/
+
+Node * GetFirstNodeInLoopIntersection(Node *head_a, Node *first_a, Node *head_b, Node *first_b) {
+	Node *ret = NULL;
+	if (first_a == first_b) { //intersect1
+		ret = GetFirstNodeInIntersectionNoLoop(head_a, head_b, first_a);
+		if (ret == NULL) {
+			return first_a;
+		} else {
+			return ret;
+		}
+	} else {
+		Node *cur = first_a;
+		do {
+			cur = cur->next;
+		} while (cur != first_a && cur != first_b);
+		if (cur == first_a) { //not intersect
+			return NULL;
+		} else { //intersect2
+			return first_a;
+		}
+	}
 }
 
 int main(int argc, char *argv[]) {
@@ -294,4 +333,3 @@ int main(int argc, char *argv[]) {
 	release_list(head_sum);
 	}
 }
-
