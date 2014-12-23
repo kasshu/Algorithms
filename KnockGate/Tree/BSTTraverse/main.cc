@@ -103,7 +103,7 @@ void postorder_recursive (Node *root) {
 
 /*
 *Solution:
-*Traverse non-recursively: pre-order for example
+*Traverse pre&in-order non-recursively: pre-order for example
 *We use stack to simulate the recursive calls. The 
 *top of stack is the node of pre recursive calls.
 *1.Print current node
@@ -129,6 +129,108 @@ void preorder_nonrecursive (Node *root) {
 	}
 }
 
+void inorder_nonrecursive (Node *root) {
+	stack<Node *> s;
+	Node *cur = root;
+	while (cur != NULL || !s.empty()) {
+		if (cur != NULL) {
+			s.push(cur);
+			cur = cur->left;
+		} else {
+			Node *parent = s.top();
+			printf("%d ", parent->val);
+			s.pop();
+			cur = parent->right;
+		}
+	}
+}
+
+/*
+*Solution:
+*Traverse post-order non-recursively:
+*We use stack to simulate the recursive calls, and another
+*stack to remember current node is the left child or the
+*right child of its parent.
+*1.Go all the way left down
+*2.If current node is empty, then:
+*2.1 If current node is the left child of parent node,
+*    then try parent's right child
+*2.2 If current node is the right child of parent node,
+*    then the right sub-tree of parent has been visited
+*    we go "right child" up: if the top of stack is the
+*    right child of next one, pop it.
+*Cost: Time-O(n), Space:O(lg(n))
+*/
+
+void postorder_nonrecursive (Node *root) {
+	stack<Node *> sn;
+	stack<bool> sl;
+	Node *cur = root;
+	while (true) {
+		if (cur != NULL) {
+			sn.push(cur);
+			sl.push(true);
+			cur = cur->left;
+		} else {
+			if (sl.top()) {
+				sl.pop();
+				sl.push(false);
+				cur = sn.top()->right;
+			} else {
+				while (!sl.empty() && !sl.top()) {
+					sl.pop();
+					printf("%d ", sn.top()->val);
+					sn.pop();
+				}
+				if (sn.empty()) {
+					break;
+				} else {
+					sl.pop();
+					cur = sn.top()->right;
+					sl.push(false);
+				}
+			}
+		}
+	}
+}
+
+/*
+*Solution:
+*Traverse post-order non-recursively:
+*We use the algorithm before and opimize the relation
+*stack out.
+*Cost: Time-O(n), Space:O(lg(n))
+*/
+
+void postorder_nonrecursive_better (Node *root) {
+	Node *fake_root = new Node(0);
+	fake_root->left = root;
+	stack<Node **> s;
+	Node **cur = &(fake_root->left);
+	while (true) {
+		if (*cur != NULL) {
+			s.push(cur);
+			cur = &((*cur)->left);
+		} else {
+			if (cur == &((*s.top())->left)) {
+				cur = &((*s.top())->right);
+			} else {
+				while (!s.empty() && cur == &((*s.top())->right)) {
+					cur = s.top();
+					printf("%d ", (*cur)->val);
+					s.pop();
+				}
+				if (s.empty()) {
+					break;
+				} else {
+					cur = &((*(s.top()))->right);
+				}
+			}
+		}
+	}
+	delete fake_root;
+}
+
 int main(int argc, char *argv[]) {
 	{
 	int a[] = {4,2,6,1,3,5,7};
@@ -144,6 +246,15 @@ int main(int argc, char *argv[]) {
 	printf("\n");
 	printf("Pre-order non-recursive:\n");
 	preorder_nonrecursive(root);
+	printf("\n");
+	printf("In-order non-recursive:\n");
+	inorder_nonrecursive(root);
+	printf("\n");
+	printf("Post-order non-recursive:\n");
+	postorder_nonrecursive(root);
+	printf("\n");
+	printf("Post-order non-recursive better:\n");
+	postorder_nonrecursive_better(root);
 	printf("\n");
 	release_tree(root);
 	}
